@@ -18,44 +18,52 @@ class AppointmentsRepo {
     required String patientId,
     required DateTime scheduledAt,
   }) async {
-    final response =
-        await supabaseClient
-            .from('appointments')
-            .insert({
-              'doctor_id': doctorId,
-              'patient_id': patientId,
-              'scheduled_at': scheduledAt.toIso8601String(),
-            })
-            .select()
-            .single();
+    try {
+      final response =
+          await supabaseClient
+              .from('appointments')
+              .insert({
+                'doctor_id': doctorId,
+                'patient_id': patientId,
+                'scheduled_at': scheduledAt.toIso8601String(),
+              })
+              .select()
+              .single();
 
-    if (response == null) {
-      throw Exception('Failed to create appointment');
+      return AppointmentModel.fromMap(response);
+    } catch (e) {
+      rethrow;
     }
-
-    return AppointmentModel.fromMap(response);
   }
 
   Future getDoctorBySpec(String specialization) async {
-    final response = await supabaseClient
-        .from('doctors')
-        .select('*')
-        .eq('specialization', specialization);
+    try {
+      final response = await supabaseClient
+          .from('doctors')
+          .select('*')
+          .eq('specialization', specialization);
 
-    return response;
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<List<AppointmentModel>> fetchAppointments(String userId) async {
-    final response = await supabaseClient
-        .from('appointments')
-        .select('*, doctors (full_name, specialization)')
-        .eq('patient_id', userId)
-        .order('scheduled_at', ascending: false);
+    try {
+      final response = await supabaseClient
+          .from('appointments')
+          .select('*, doctors (full_name, specialization)')
+          .eq('patient_id', userId)
+          .order('scheduled_at', ascending: false);
 
-    print('App: $response');
+      print('App: $response');
 
-    return (response as List)
-        .map((json) => AppointmentModel.fromMap(json as Map<String, dynamic>))
-        .toList();
+      return (response as List)
+          .map((json) => AppointmentModel.fromMap(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

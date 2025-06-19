@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:health_fixed/core/providers/supabase_client.dart';
 import 'package:health_fixed/features/appointments/model/appointment_model.dart';
 import 'package:health_fixed/features/appointments/model/doctor_model.dart';
